@@ -182,6 +182,50 @@ class GraphVis extends React.Component {
     return { ...options, ...edge.settings };
   }
 
+  formatNodeLabel(value) {
+    if (value === undefined || value === null) {
+      return "";
+    }
+
+    const text = String(value).replace(/\s+/g, " ").trim();
+    const characters = Array.from(text);
+    const fontSize = Defaults.nodeLabelCfg.style.fontSize;
+    const maxWidth = Defaults.nodeLabelMaxWidth;
+    const measure = (charactersToMeasure) => G6.Util.getTextSize(charactersToMeasure.join(""), fontSize)[0];
+
+    if (measure(characters) <= maxWidth) {
+      return text;
+    }
+
+    let splitIndex = 0;
+    let firstLine = [];
+    while (splitIndex < characters.length) {
+      const candidate = [...firstLine, characters[splitIndex]];
+      if (firstLine.length > 0 && measure(candidate) > maxWidth) {
+        break;
+      }
+      firstLine = candidate;
+      splitIndex += 1;
+    }
+
+    const remaining = characters.slice(splitIndex);
+    if (measure(remaining) <= maxWidth) {
+      return `${firstLine.join("")}\n${remaining.join("")}`;
+    }
+
+    const ellipsis = Array.from("...");
+    let secondLine = [];
+    for (const character of remaining) {
+      const candidate = [...secondLine, character, ...ellipsis];
+      if (secondLine.length > 0 && measure(candidate) > maxWidth) {
+        break;
+      }
+      secondLine.push(character);
+    }
+
+    return `${firstLine.join("")}\n${secondLine.join("")}...`;
+  }
+
   getControlPoints(x1, y1, x2, y2, d) {
     const midx = (x1 + x2) / 2;
     const midy = (y1 + y2) / 2;
@@ -480,7 +524,7 @@ class GraphVis extends React.Component {
       // update label if needed
       if (settings.text === "property" && settings.textValue !== "" && typeof node.properties === "object") {
         if (settings.textValue in node.properties) {
-          node.label = node.properties[settings.textValue];
+          node.label = this.formatNodeLabel(node.properties[settings.textValue]);
         }
       }
       // TODO: update size if needed
@@ -935,7 +979,7 @@ class GraphVis extends React.Component {
           if (options.textValue in node.properties) {
             new_node.label = node.properties[options.textValue];
           } else {
-            new_node.label = "N/A";
+            new_node.label = node.realLabel;
           }
         } else {
           if (!added) {
@@ -963,6 +1007,10 @@ class GraphVis extends React.Component {
       nodesMissingProperties.push(node.id.substring(2));
     }
 
+    if (new_node.label !== undefined) {
+      new_node.label = this.formatNodeLabel(new_node.label);
+    }
+
     return new_node;
   }
 
@@ -985,7 +1033,7 @@ class GraphVis extends React.Component {
           if (options.textValue in edge.properties) {
             new_edge.label = edge.properties[options.textValue];
           } else {
-            new_edge.label = "N/A";
+            new_edge.label = edge.realLabel;
           }
         } else {
           new_edge.label = edge.realLabel;

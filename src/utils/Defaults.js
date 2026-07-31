@@ -27,10 +27,12 @@ import { Arrow } from "@antv/g6";
 class Defaults {
   static nodeLabelCfg = {
     style: {
-      fill: "#000000E6",
-      fontSize: 10,
+      fill: "#FFFFFF",
+      fontSize: 12,
+      fontWeight: 500,
+      lineHeight: 14,
     },
-    position: "bottom",
+    position: "center",
   };
 
   static edgeLabelCfg = {
@@ -50,9 +52,9 @@ class Defaults {
     random: { type: "random" },
     force: {
       type: "force",
-      linkDistance: 60,
+      linkDistance: 100,
       preventOverlap: true,
-      nodeSize: 40,
+      nodeSize: 50,
       nodeSpacing: 20,
       alphaDecay: 0.084,
     },
@@ -60,28 +62,28 @@ class Defaults {
       type: "radial",
       nodeSpacing: 20,
       preventOverlap: true,
-      nodeSize: 40,
-      linkDistance: 60,
+      nodeSize: 50,
+      linkDistance: 100,
     },
     dagreTB: { type: "dagre", rankdir: "TB", nodesep: 5 },
     dagreLR: { type: "dagre", rankdir: "LR", nodesep: 5 },
     concentric: {
       type: "concentric",
       preventOverlap: true,
-      nodeSize: 40,
+      nodeSize: 50,
       minNodeSpacing: 30,
     },
     grid: {
       type: "grid",
       preventOverlap: true,
-      nodeSize: 40,
+      nodeSize: 50,
       preventOverlapPadding: 80,
       condense: true,
     },
     circular: {
       type: "circular",
       preventOverlap: true,
-      nodeSize: 40,
+      nodeSize: 50,
       preventOverlapPadding: 80,
       radius: 200,
     },
@@ -113,7 +115,8 @@ class Defaults {
     "#ABB2B9",
   ];
 
-  static nodeSize = 25;
+  static nodeSize = 50;
+  static nodeLabelMaxWidth = 40;
   static autoNodeSizeMin = this.nodeSize;
   static autoNodeSizeMax = this.nodeSize * 2;
 
@@ -224,7 +227,8 @@ class Defaults {
   static layout = "force";
 
   static nodeSettings = {
-    text: "id",
+    text: "property",
+    textValue: "name",
     nodeShape: "circle",
     // nodeColor: "#4a90e2",
     nodeImageType: "imageUrl",
@@ -232,7 +236,8 @@ class Defaults {
   };
 
   static edgeSettings = {
-    text: "label",
+    text: "property",
+    textValue: "name",
     lineType: "line",
     lineDash: false,
     lineArrow: true,
@@ -248,7 +253,8 @@ class Defaults {
 
   static defaultNodeCfg() {
     const cfg = {
-      text: "id",
+      text: "property",
+      textValue: "name",
       nodeShape: "circle",
       nodeColor: this.presetNodeColors[this.nodeColorIndex],
       nodeSize: "autoResizeDisabled",
@@ -262,6 +268,8 @@ class Defaults {
 
   static defaultEdgeCfg() {
     const cfg = {
+      text: "property",
+      textValue: "name",
       lineType: "line",
       lineColor: this.presetEdgeColors[this.edgeColorIndex],
       lineDash: false,

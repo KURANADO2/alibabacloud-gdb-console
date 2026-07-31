@@ -23,14 +23,41 @@
  */
 
 const configKey = "graphEyeConfigV2";
+const displayNameDefaultsVersion = 1;
 
 export default class SettingsStorage {
   load() {
     const data = localStorage.getItem(configKey);
     if (data) {
-      return JSON.parse(data);
+      const settings = JSON.parse(data);
+      settings.system = settings.system || {};
+      settings.node = settings.node || {};
+      settings.edge = settings.edge || {};
+
+      if (settings.system.displayNameDefaultsVersion !== displayNameDefaultsVersion) {
+        Object.values(settings.node).forEach((nodeSettings) => {
+          if (nodeSettings.text === "id") {
+            nodeSettings.text = "property";
+            nodeSettings.textValue = "name";
+          }
+        });
+        Object.values(settings.edge).forEach((edgeSettings) => {
+          if (edgeSettings.text === undefined || edgeSettings.text === "label") {
+            edgeSettings.text = "property";
+            edgeSettings.textValue = "name";
+          }
+        });
+        settings.system.displayNameDefaultsVersion = displayNameDefaultsVersion;
+        this.save(settings);
+      }
+
+      return settings;
     }
-    return { system: {}, node: {}, edge: {} };
+    return {
+      system: { displayNameDefaultsVersion },
+      node: {},
+      edge: {},
+    };
   }
 
   save(settings) {
