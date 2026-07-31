@@ -1,3 +1,24 @@
-node_modules
-build
-dist
+# Dependencies
+node_modules/
+
+# Build and test output
+build/
+dist/
+coverage/
+docker/gdb-console.tar
+
+# Runtime and package-manager logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Local environment configuration
+.env
+.env.*
+!.env.example
+
+# Tool and operating-system files
+.eslintcache
+.DS_Store
