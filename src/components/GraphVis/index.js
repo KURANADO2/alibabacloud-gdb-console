@@ -43,6 +43,7 @@ class GraphVis extends React.Component {
     },
     nodeVisOptions: {},
     edgeVisOptions: {},
+    labelLegend: null,
 
     // callback
     getNodePropertyCallback: null,
@@ -1232,16 +1233,21 @@ class GraphVis extends React.Component {
     return (
       <div className="graph-vis-container">
         <div id="graphVis" ref={this.appRef_} style={this.props.style} />
-        {this.state.nodeTypeLegend.length > 0 ? (
-          <div className="node-type-legend">
-            <div className="node-type-legend-title">Type</div>
-            {this.state.nodeTypeLegend.map((entry) => (
-              <div className="node-type-legend-row" key={entry.type} title={entry.type}>
-                <span className="node-type-legend-swatch" style={{ backgroundColor: entry.color }} />
-                <span className="node-type-legend-label">{entry.type}</span>
-                <span className="node-type-legend-count">{entry.count}</span>
+        {this.state.nodeTypeLegend.length > 0 || this.props.labelLegend ? (
+          <div className="graph-legend-stack">
+            {this.state.nodeTypeLegend.length > 0 ? (
+              <div className="node-type-legend">
+                <div className="node-type-legend-title">Type</div>
+                {this.state.nodeTypeLegend.map((entry) => (
+                  <div className="node-type-legend-row" key={entry.type} title={entry.type}>
+                    <span className="node-type-legend-swatch" style={{ backgroundColor: entry.color }} />
+                    <span className="node-type-legend-label">{entry.type}</span>
+                    <span className="node-type-legend-count">{entry.count}</span>
+                  </div>
+                ))}
               </div>
-            ))}
+            ) : null}
+            {this.props.labelLegend}
           </div>
         ) : null}
       </div>
@@ -1259,6 +1265,7 @@ GraphVis.propTypes = {
   graphChangedCallback: PropTypes.func,
   nodeVisOptions: PropTypes.object,
   edgeVisOptions: PropTypes.object,
+  labelLegend: PropTypes.node,
   canvasHeight: PropTypes.number,
 };
 

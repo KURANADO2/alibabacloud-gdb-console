@@ -1744,7 +1744,6 @@ class GraphZone extends React.Component {
 
     const graphVisCard = (
       <div>
-        {legendPanel}
         <GraphVis
           ref={(graphVis) => {
             this.graphVis_ = graphVis;
@@ -1763,6 +1762,7 @@ class GraphZone extends React.Component {
           }}
           nodeVisOptions={this.settings.node}
           edgeVisOptions={this.settings.edge}
+          labelLegend={legendPanel}
           canvasHeight={graphVisHeight}
         />
       </div>
