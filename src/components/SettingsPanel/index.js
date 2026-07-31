@@ -80,13 +80,25 @@ class SettingsPanel extends React.Component {
 
     const colorPicker = (
       <div>
+        <Radio.Group
+          name="nodeColorMode"
+          direction="hoz"
+          value={settings.nodeColorMode || "type"}
+          onChange={(v) => this.props.onChange({ nodeColorMode: v })}
+        >
+          <Radio value="type">按 type 属性</Radio>
+          <Radio value="custom">自定义</Radio>
+        </Radio.Group>
         <div className="color-picker-swatch" style={{ width: "100%" }}>
           <Input
             ref={this.colorPickerRef}
             value={settings.nodeColor}
+            disabled={(settings.nodeColorMode || "type") !== "custom"}
             addonTextBefore="颜色"
             onFocus={() => {
-              this.setState({ colorPickerVisible: true });
+              if (settings.nodeColorMode === "custom") {
+                this.setState({ colorPickerVisible: true });
+              }
             }}
             addonAfter={
               <div

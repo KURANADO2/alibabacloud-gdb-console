@@ -63,6 +63,7 @@ class GraphVis extends React.Component {
     this.graph_ = null;
     this.colorIndex_ = 0;
     this.labelColor_ = {};
+    this.nodeTypeColors_ = {};
     this.autoShowPropertyTaskCount_ = 0;
   }
 
@@ -156,6 +157,39 @@ class GraphVis extends React.Component {
     const color = this.getColor();
     this.labelColor_[label] = color;
     return color;
+  }
+
+  getColorByNodeType(type) {
+    const key = String(type);
+    if (key in this.nodeTypeColors_) {
+      return this.nodeTypeColors_[key];
+    }
+
+    const colorIndex = Object.keys(this.nodeTypeColors_).length;
+    let color;
+    if (colorIndex < Defaults.presetNodeColors.length) {
+      color = Defaults.presetNodeColors[colorIndex];
+    } else {
+      const hue = Math.round((colorIndex * 137.508) % 360);
+      color = `hsl(${hue}, 65%, 52%)`;
+    }
+    this.nodeTypeColors_[key] = color;
+    return color;
+  }
+
+  getNodeColor(node, options) {
+    if (options.nodeColorMode === "custom") {
+      return options.nodeColor;
+    }
+    if (
+      typeof node.properties === "object" &&
+      node.properties !== null &&
+      node.properties.type !== undefined &&
+      node.properties.type !== null
+    ) {
+      return this.getColorByNodeType(node.properties.type);
+    }
+    return options.nodeColor;
   }
 
   getNodeOptions(node) {
@@ -526,6 +560,10 @@ class GraphVis extends React.Component {
         if (settings.textValue in node.properties) {
           node.label = this.formatNodeLabel(node.properties[settings.textValue]);
         }
+      }
+      const nodeColor = this.getNodeColor(node, settings);
+      if (nodeColor) {
+        node.style = { ...model.style, fill: nodeColor };
       }
       // TODO: update size if needed
     }
@@ -997,9 +1035,14 @@ class GraphVis extends React.Component {
       }
     }
 
-    // color
-    if (options.nodeColor) {
-      new_node.style.fill = options.nodeColor;
+    // Prefer the node's type property so nodes of the same type share a color.
+    const nodeColor = this.getNodeColor(node, options);
+    if (nodeColor) {
+      new_node.style.fill = nodeColor;
+    }
+    if (typeof node.properties !== "object" && !added) {
+      nodesMissingProperties.push(node.id.substring(2));
+      added = true;
     }
 
     // resize by property

@@ -231,6 +231,7 @@ class Defaults {
     textValue: "name",
     nodeShape: "circle",
     // nodeColor: "#4a90e2",
+    nodeColorMode: "type",
     nodeImageType: "imageUrl",
     nodeSize: "autoResizeDisabled",
   };
@@ -257,6 +258,7 @@ class Defaults {
       textValue: "name",
       nodeShape: "circle",
       nodeColor: this.presetNodeColors[this.nodeColorIndex],
+      nodeColorMode: "type",
       nodeSize: "autoResizeDisabled",
     };
     ++this.nodeColorIndex;
