@@ -207,7 +207,7 @@ div.clear-btn {
 
 div.legend {
   position: absolute;
-  right: 0;
+  left: 0;
   bottom: 0;
   z-index: 1;
   width: 200px;

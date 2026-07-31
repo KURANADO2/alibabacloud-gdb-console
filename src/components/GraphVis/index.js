@@ -54,6 +54,9 @@ class GraphVis extends React.Component {
 
   constructor(props) {
     super(props);
+    this.state = {
+      nodeTypeLegend: [],
+    };
     this.appRef_ = React.createRef();
 
     // label
@@ -190,6 +193,43 @@ class GraphVis extends React.Component {
       return this.getColorByNodeType(node.properties.type);
     }
     return options.nodeColor;
+  }
+
+  updateNodeTypeLegend() {
+    if (this.graph_ === null) {
+      return;
+    }
+
+    const legendByType = new Map();
+    this.graph_.getNodes().forEach((item) => {
+      const node = item.getModel();
+      const options = this.props.nodeVisOptions[node.realLabel];
+      if (options && options.nodeColorMode === "custom") {
+        return;
+      }
+      if (
+        typeof node.properties !== "object" ||
+        node.properties === null ||
+        node.properties.type === undefined ||
+        node.properties.type === null
+      ) {
+        return;
+      }
+
+      const type = String(node.properties.type);
+      if (!legendByType.has(type)) {
+        legendByType.set(type, {
+          type,
+          color: this.getColorByNodeType(node.properties.type),
+          count: 0,
+        });
+      }
+      legendByType.get(type).count += 1;
+    });
+
+    this.setState({
+      nodeTypeLegend: Array.from(legendByType.values()).sort((a, b) => a.type.localeCompare(b.type)),
+    });
   }
 
   getNodeOptions(node) {
@@ -365,6 +405,7 @@ class GraphVis extends React.Component {
 
     if (newNodes.length > 0 || newEdges.length > 0) {
       this.graph_.layout();
+      this.updateNodeTypeLegend();
       if (this.autoShowProperty_) {
         this.getAllProperties(nodesMissingProperties, edgesMissingProperties);
       }
@@ -605,6 +646,7 @@ class GraphVis extends React.Component {
         for (const i in nodeIds) {
           this.mergeNode(nodeIds[i], { properties: this.propertiesToObject(properties[i]) });
         }
+        this.updateNodeTypeLegend();
         // resize nodes
         this.resizeAllNodes();
       });
@@ -952,6 +994,7 @@ class GraphVis extends React.Component {
         this.getAllProperties(nodesMissingProperties, []);
       }
     }
+    this.updateNodeTypeLegend();
   }
 
   applyEdgeSettings(label, settings) {
@@ -1160,6 +1203,7 @@ class GraphVis extends React.Component {
 
       this.graph_.data({ nodes: showNodes, edges: showEdges });
       this.graph_.render();
+      this.updateNodeTypeLegend();
 
       if (nodesMissingProperties.length === 0) {
         this.resizeAllNodes();
@@ -1185,7 +1229,23 @@ class GraphVis extends React.Component {
 
   render() {
     this.resize();
-    return <div id="graphVis" ref={this.appRef_} style={this.props.style} />;
+    return (
+      <div className="graph-vis-container">
+        <div id="graphVis" ref={this.appRef_} style={this.props.style} />
+        {this.state.nodeTypeLegend.length > 0 ? (
+          <div className="node-type-legend">
+            <div className="node-type-legend-title">Type</div>
+            {this.state.nodeTypeLegend.map((entry) => (
+              <div className="node-type-legend-row" key={entry.type} title={entry.type}>
+                <span className="node-type-legend-swatch" style={{ backgroundColor: entry.color }} />
+                <span className="node-type-legend-label">{entry.type}</span>
+                <span className="node-type-legend-count">{entry.count}</span>
+              </div>
+            ))}
+          </div>
+        ) : null}
+      </div>
+    );
   }
 }
 
