@@ -3,6 +3,46 @@
   padding-left: 4px;
 }
 
+.graph-zone {
+  position: relative;
+}
+
+.panel-toggle {
+  position: absolute !important;
+  top: 50%;
+  z-index: 10;
+  width: 28px;
+  min-width: 28px !important;
+  padding: 0 !important;
+  transform: translateY(-50%);
+}
+
+.panel-toggle-left {
+  left: 150px;
+}
+
+.panel-toggle-right {
+  right: 270px;
+}
+
+.left-panel-collapsed .panel-toggle-left {
+  left: 4px;
+}
+
+.right-panel-collapsed .panel-toggle-right {
+  right: 4px;
+}
+
+.left-panel-collapsed .left-area,
+.right-panel-collapsed .right-area {
+  display: none;
+}
+
+.right-panel-collapsed .query-input,
+.right-panel-collapsed .main-area {
+  margin-right: 0;
+}
+
 .CodeMirror-empty.CodeMirror-focused {
   outline: none;
 }

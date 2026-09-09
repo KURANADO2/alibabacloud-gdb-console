@@ -121,6 +121,8 @@ class GraphZone extends React.Component {
 
       selectedAlgo: null,
       isAp: false,
+      leftPanelCollapsed: false,
+      rightPanelCollapsed: false,
     };
 
     this.layout = Defaults.layout;
@@ -2154,9 +2156,57 @@ class GraphZone extends React.Component {
       </div>
     );
 
+    const panelToggleButtons = (
+      <>
+        <Balloon.Tooltip
+          trigger={
+            <Button
+              className="panel-toggle panel-toggle-left"
+              size="small"
+              aria-label={this.state.leftPanelCollapsed ? "展开操作面板" : "收起操作面板"}
+              onClick={() => {
+                this.setState((state) => ({ leftPanelCollapsed: !state.leftPanelCollapsed }));
+              }}
+            >
+              <Icon type={this.state.leftPanelCollapsed ? "arrow-right" : "arrow-left"} />
+            </Button>
+          }
+          align="t"
+        >
+          {this.state.leftPanelCollapsed ? "展开操作面板" : "收起操作面板"}
+        </Balloon.Tooltip>
+        <Balloon.Tooltip
+          trigger={
+            <Button
+              className="panel-toggle panel-toggle-right"
+              size="small"
+              aria-label={this.state.rightPanelCollapsed ? "展开属性信息面板" : "收起属性信息面板"}
+              onClick={() => {
+                this.setState((state) => ({ rightPanelCollapsed: !state.rightPanelCollapsed }));
+              }}
+            >
+              <Icon type={this.state.rightPanelCollapsed ? "arrow-left" : "arrow-right"} />
+            </Button>
+          }
+          align="t"
+        >
+          {this.state.rightPanelCollapsed ? "展开属性信息面板" : "收起属性信息面板"}
+        </Balloon.Tooltip>
+      </>
+    );
+
+    const graphZoneClassName = [
+      "graph-zone",
+      this.state.leftPanelCollapsed ? "left-panel-collapsed" : "",
+      this.state.rightPanelCollapsed ? "right-panel-collapsed" : "",
+    ]
+      .filter(Boolean)
+      .join(" ");
+
     return (
-      <div>
+      <div className={graphZoneClassName}>
         <Loading visible={this.state.loadingVisible} fullScreen>
+          {panelToggleButtons}
           <div className="left-area">{leftPanel}</div>
           <div className="right-area">{propertyCard}</div>
           <div className="query-input">{queryInput}</div>

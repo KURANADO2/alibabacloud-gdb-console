@@ -149,6 +149,10 @@ class GraphVis extends React.Component {
     this.graph_.updateLayout(Defaults.defaultLayout());
   }
 
+  componentDidUpdate() {
+    this.resize();
+  }
+
   getColor() {
     // eslint-disable-next-line no-plusplus
     return Defaults.colors[this.colorIndex_++ % Defaults.colors.length];

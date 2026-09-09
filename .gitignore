@@ -22,3 +22,4 @@ pnpm-debug.log*
 # Tool and operating-system files
 .eslintcache
 .DS_Store
+.idea/
