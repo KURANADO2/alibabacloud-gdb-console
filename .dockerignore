@@ -1,0 +1,21 @@
+# 依赖与构建产物：一律在镜像内重新生成。
+# 尤其不能把 Mac 上的 node_modules 带进去，那是 arm64 的二进制。
+node_modules
+backend/node_modules
+build
+coverage
+
+# 版本库与编辑器、工具目录
+.git
+.gitignore
+.idea
+.claude
+.DS_Store
+
+# 与容器运行无关的部分
+docker
+electron
+
+# 日志
+*.log
+backend/access.log
